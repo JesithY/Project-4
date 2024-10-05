@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1085719067312",
+    "project_id": "jbushapogu-cmsc5303-flutter",
+    "storage_bucket": "jbushapogu-cmsc5303-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1085719067312:android:991ddcdab194df91f45975",
+        "android_client_info": {
+          "package_name": "edu.uco.jbushapogu.cmsc5303.l"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiVil36FnbfkKDwv0cuVpWnB-u611kdjg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1085719067312:android:68cf02ba062adb8df45975",
+        "android_client_info": {
+          "package_name": "edu.uco.jbushapogu.cmsc5303.lesson6"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiVil36FnbfkKDwv0cuVpWnB-u611kdjg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
