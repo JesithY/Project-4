@@ -26,9 +26,6 @@ class CreateAccountModel {
     }
   }
 
-
-
-
   void saveEmail(String? value) {
     email = value?.trim();
   }
