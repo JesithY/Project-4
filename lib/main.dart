@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:lesson6/view/createaccount_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lesson6/view/startdispatcher.dart';
+import 'package:lesson6/view/createaccount_screen.dart';
+import 'package:lesson6/view/gameroom_screen.dart';
+import 'package:lesson6/model/game_model.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -9,6 +12,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(const FirebaseTemplateApp());
 }
 
@@ -22,10 +26,14 @@ class FirebaseTemplateApp extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: Colors.blue,
       ),
-      initialRoute: Startdispatcher.routeName,
+      initialRoute: StartDispatcher.routeName,
       routes: {
-        Startdispatcher.routeName:(context) => const Startdispatcher(),
+        StartDispatcher.routeName: (context) => const StartDispatcher(),
         CreateAccountScreen.routName: (context) => const CreateAccountScreen(),
+        '/gameRoom': (context) {
+          User currentUser = FirebaseAuth.instance.currentUser!;
+          return GameRoomScreen(model: GameModel(user: currentUser));
+        },
       },
     );
   }

@@ -1,92 +1,100 @@
-// home_screen.dart (View)
+// home_screen.dart
 
 import 'package:flutter/material.dart';
 import 'package:lesson6/controller/home_controller.dart';
 import 'package:lesson6/model/home_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
-  final HomeModel model;
+  final User user;
 
-  const HomeScreen({super.key, required this.model});
+  const HomeScreen({super.key, required this.user});
 
   @override
-  HomeState createState() => HomeState();
+  State<StatefulWidget> createState() {
+    return HomeState();
+  }
 }
 
 class HomeState extends State<HomeScreen> {
-  late HomeController controller;
+  late HomeController con;
+  late HomeModel model;
 
   @override
   void initState() {
     super.initState();
-    controller = HomeController(this);
+    con = HomeController(this);
+    model = HomeModel(widget.user);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home"),
+        title: const Text('Home'),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.blue,
+      // ignore: deprecated_member_use
+      body: WillPopScope(
+        onWillPop: () => Future.value(false),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                model.user.email!,
+                style: const TextStyle(fontSize: 18),
               ),
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "No Profile",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.model.user.email ?? "No Email",
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                  ],
+              const SizedBox(height: 8),
+              const Text(
+                "Welcome to Dice Game!",
+                style: TextStyle(fontSize: 20),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/gameRoom');
+                },
+                child: const Text("Enter Game Room"),
+              ),
+            ],
+          ),
+        ),
+      ),
+      drawer: drawerView(context),
+    );
+  }
+
+  Widget drawerView(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 52, 112, 160),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const Text(
+                  "No Profile",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
-              ),
+                const SizedBox(height: 4),
+                Text(
+                  model.user.email!,
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                ),
+              ],
             ),
-            ListTile(
-              leading: const Icon(Icons.exit_to_app),
-              title: const Text('Sign Out'),
-              onTap: () {
-                controller.signOut();
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              widget.model.user.email ?? "User Email",
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              "Welcome to Dice Game!",
-              style: TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/gameRoom');
-              },
-              child: const Text("Enter Game Room"),
-            ),
-          ],
-        ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Sign Out'),
+            onTap: con.signOut,
+          ),
+        ],
       ),
     );
   }
