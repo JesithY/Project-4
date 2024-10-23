@@ -1,5 +1,3 @@
-// game_controller.dart (Controller)
-
 import 'package:lesson6/model/game_model.dart';
 import 'dart:math';
 
@@ -8,7 +6,6 @@ class GameController {
   GameModel model;
 
   GameController(this.model, this.onUpdate) {
-    // Set default selections for initial state
     model.selectedBetType = BetType.odd;
     model.selectedBetRange = BetRange.range1to2;
     _enablePlayButtonIfNeeded();
@@ -16,11 +13,6 @@ class GameController {
 
   void toggleShowKey(bool value) {
     model.showKey = value;
-    if (value) {
-      model.key = Random().nextInt(6) + 1;
-    } else {
-      model.key = 0;
-    }
     onUpdate(model);
   }
 
@@ -45,9 +37,6 @@ class GameController {
   }
 
   void playGame() {
-    final random = Random();
-    model.key = random.nextInt(6) + 1;
-
     String resultMessage = '';
     if (model.selectedBetType != null && model.betAmount != null) {
       if ((model.key % 2 == 0 && model.selectedBetType == BetType.even) ||
@@ -84,9 +73,12 @@ class GameController {
   }
 
   void newGame() {
+    bool previousShowKey = model.showKey; // Preserve showKey state
     model.reset();
+    model.key = Random().nextInt(6) + 1; // Generate a new key between 1 and 6, inclusive
     model.selectedBetType = BetType.odd;
     model.selectedBetRange = BetRange.range1to2;
+    model.showKey = previousShowKey; // Restore showKey state
     onUpdate(model);
   }
 
@@ -113,5 +105,3 @@ extension BetRangeLabel on BetRange {
     }
   }
 }
-
-

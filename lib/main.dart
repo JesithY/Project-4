@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lesson6/model/game_model.dart';
 import 'package:lesson6/view/startdispatcher.dart';
 import 'package:lesson6/view/createaccount_screen.dart';
 import 'package:lesson6/view/gameroom_screen.dart';
-import 'package:lesson6/model/game_model.dart';
 import 'firebase_options.dart';
 
 void main() async {
