@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:lesson6/controller/game_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -103,17 +102,31 @@ class GameRoomState extends State<GameRoomScreen> {
                     if (widget.model.result.isNotEmpty)
                       Positioned(
                         top: 100,
-                        child: Container(
-                          padding: const EdgeInsets.all(4.0),
-                          //color: Colors.yellow.withOpacity(0.8),
-                          child: Text(
-                            widget.model.result,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Color.fromARGB(255, 221, 225, 25),
-                            ),
-                            textAlign: TextAlign.start,
-                          ),
+                        child: Column(
+                          children: widget.model.result
+                              .split('\n')
+                              .map(
+                                (sentence) => Container(
+                                  margin: const EdgeInsets.symmetric(vertical: 2.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 4.0),
+                                  decoration: BoxDecoration(
+                                    //color: Colors.yellow.withOpacity(0.8),
+                                    border: Border.all(
+                                        color: const Color.fromARGB(255, 215, 232, 38), width: 1.0),
+                                    borderRadius: BorderRadius.circular(4.0),
+                                  ),
+                                  child: Text(
+                                    sentence,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Color.fromARGB(255, 215, 232, 38),
+                                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ),
+                              )
+                              .toList(),
                         ),
                       ),
                   ],
