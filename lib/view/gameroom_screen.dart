@@ -107,13 +107,16 @@ class GameRoomState extends State<GameRoomScreen> {
                               .split('\n')
                               .map(
                                 (sentence) => Container(
-                                  margin: const EdgeInsets.symmetric(vertical: 2.0),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 2.0),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8.0, vertical: 4.0),
                                   decoration: BoxDecoration(
                                     //color: Colors.yellow.withOpacity(0.8),
                                     border: Border.all(
-                                        color: const Color.fromARGB(255, 215, 232, 38), width: 1.0),
+                                        color: const Color.fromARGB(
+                                            255, 215, 232, 38),
+                                        width: 1.0),
                                     borderRadius: BorderRadius.circular(4.0),
                                   ),
                                   child: Text(
