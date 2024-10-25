@@ -4,11 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lesson6/model/game_model.dart';
 import 'package:lesson6/view/startdispatcher.dart';
 
-// ignore: must_be_immutable
 class GameRoomScreen extends StatefulWidget {
-  GameModel model;
+  final GameModel model;
 
-  GameRoomScreen({super.key, required this.model});
+  const GameRoomScreen({super.key, required this.model});
 
   @override
   GameRoomState createState() => GameRoomState();
@@ -16,17 +15,19 @@ class GameRoomScreen extends StatefulWidget {
 
 class GameRoomState extends State<GameRoomScreen> {
   late GameController controller;
+  late GameModel currentModel;
 
   @override
   void initState() {
     super.initState();
-    controller = GameController(widget.model, _updateModel);
-    controller.newGame(); // Generate a new key for a new game.
+    currentModel = widget.model;
+    controller = GameController(currentModel, updateModel);
+    controller.startNewGame(); // Generate a new key for a new game.
   }
 
-  void _updateModel(GameModel updatedModel) {
+  void updateModel(GameModel updatedModel) {
     setState(() {
-      widget.model = updatedModel;
+      currentModel = updatedModel;
     });
   }
 
@@ -42,8 +43,7 @@ class GameRoomState extends State<GameRoomScreen> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: const Text('No Profile'),
-              accountEmail:
-                  Text(widget.model.user.email ?? 'No Email Available'),
+              accountEmail: Text(currentModel.user.email ?? 'No Email Available'),
               decoration: const BoxDecoration(
                 color: Color.fromARGB(255, 78, 132, 177),
               ),
@@ -61,7 +61,7 @@ class GameRoomState extends State<GameRoomScreen> {
                       (route) => false,
                     );
                   }
-                }); // Navigate to sign-in screen
+                });
               },
             ),
           ],
@@ -75,7 +75,7 @@ class GameRoomState extends State<GameRoomScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Balance: \$${widget.model.balance}${widget.model.showKey ? ' (Key: ${widget.model.key})' : ''}',
+                'Balance: \$${currentModel.balance}${currentModel.showKey ? ' (Key: ${currentModel.key})' : ''}',
                 style: const TextStyle(fontSize: 20),
               ),
               const SizedBox(height: 20),
@@ -91,19 +91,19 @@ class GameRoomState extends State<GameRoomScreen> {
                   alignment: Alignment.center,
                   children: [
                     Text(
-                      widget.model.result.isNotEmpty
-                          ? '${widget.model.key}'
+                      currentModel.result.isNotEmpty
+                          ? '${currentModel.key}'
                           : '?',
                       style: const TextStyle(
                         fontSize: 150,
                         color: Colors.red,
                       ),
                     ),
-                    if (widget.model.result.isNotEmpty)
+                    if (currentModel.result.isNotEmpty)
                       Positioned(
                         top: 100,
                         child: Column(
-                          children: widget.model.result
+                          children: currentModel.result
                               .split('\n')
                               .map(
                                 (sentence) => Container(
@@ -112,7 +112,6 @@ class GameRoomState extends State<GameRoomScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8.0, vertical: 4.0),
                                   decoration: BoxDecoration(
-                                    //color: Colors.yellow.withOpacity(0.8),
                                     border: Border.all(
                                         color: const Color.fromARGB(
                                             255, 215, 232, 38),
@@ -141,26 +140,26 @@ class GameRoomState extends State<GameRoomScreen> {
                 children: [
                   const Text('Show Key:'),
                   Switch(
-                    value: widget.model.showKey,
-                    onChanged: (value) => controller.toggleShowKey(value),
+                    value: currentModel.showKey,
+                    onChanged: (value) => controller.toggleKeyVisibility(value),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
-              _buildBettingSection(),
+              buildBettingSection(),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
                     onPressed:
-                        widget.model.isPlayEnabled ? controller.playGame : null,
+                        currentModel.isPlayEnabled ? controller.startGame : null,
                     child: const Text('Play'),
                   ),
                   ElevatedButton(
-                    onPressed: widget.model.isNewGameEnabled
+                    onPressed: currentModel.isNewGameEnabled
                         ? () {
-                            controller.newGame();
+                            controller.startNewGame();
                           }
                         : null,
                     child: const Text('New Game'),
@@ -174,7 +173,7 @@ class GameRoomState extends State<GameRoomScreen> {
     );
   }
 
-  Widget _buildBettingSection() {
+  Widget buildBettingSection() {
     return Column(
       children: [
         const Text('Bet on even/odd: 2x winnings'),
@@ -187,11 +186,11 @@ class GameRoomState extends State<GameRoomScreen> {
                 children: [
                   Radio(
                     value: BetType.odd,
-                    groupValue: widget.model.selectedBetType,
-                    onChanged: widget.model.isBettingDisabled
+                    groupValue: currentModel.selectedBetType,
+                    onChanged: currentModel.isBettingDisabled
                         ? null
                         : (value) => controller
-                            .selectBetType(widget.model.parseBetType(value)!),
+                            .chooseBetType(currentModel.parseBetType(value)!),
                   ),
                   const Text('Odd'),
                 ],
@@ -200,11 +199,11 @@ class GameRoomState extends State<GameRoomScreen> {
                 children: [
                   Radio(
                     value: BetType.even,
-                    groupValue: widget.model.selectedBetType,
-                    onChanged: widget.model.isBettingDisabled
+                    groupValue: currentModel.selectedBetType,
+                    onChanged: currentModel.isBettingDisabled
                         ? null
                         : (value) => controller
-                            .selectBetType(widget.model.parseBetType(value)!),
+                            .chooseBetType(currentModel.parseBetType(value)!),
                   ),
                   const Text('Even'),
                   const SizedBox(width: 20),
@@ -214,7 +213,7 @@ class GameRoomState extends State<GameRoomScreen> {
                 color: const Color.fromARGB(255, 194, 227, 241),
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: DropdownButton<int?>(
-                  value: widget.model.betAmount,
+                  value: currentModel.betAmount,
                   items: const [
                     DropdownMenuItem<int?>(
                         value: null, child: Text('Choose bet amount')),
@@ -222,14 +221,14 @@ class GameRoomState extends State<GameRoomScreen> {
                     DropdownMenuItem(value: 20, child: Text('\$20')),
                     DropdownMenuItem(value: 30, child: Text('\$30')),
                   ],
-                  onChanged: widget.model.isBettingDisabled
+                  onChanged: currentModel.isBettingDisabled
                       ? null
                       : (value) {
                           setState(() {
-                            widget.model.betAmount = value;
-                            widget.model.isPlayEnabled =
-                                widget.model.betAmount != null ||
-                                    widget.model.rangeBetAmount != null;
+                            currentModel.betAmount = value;
+                            currentModel.isPlayEnabled =
+                                currentModel.betAmount != null ||
+                                    currentModel.rangeBetAmount != null;
                           });
                         },
                   hint: const Text('Choose bet amount'),
@@ -245,29 +244,29 @@ class GameRoomState extends State<GameRoomScreen> {
           children: [
             Radio(
               value: BetRange.range1to2,
-              groupValue: widget.model.selectedBetRange,
-              onChanged: widget.model.isBettingDisabled
+              groupValue: currentModel.selectedBetRange,
+              onChanged: currentModel.isBettingDisabled
                   ? null
                   : (value) => controller
-                      .selectBetRange(widget.model.parseBetRange(value)!),
+                      .chooseBetRange(currentModel.parseBetRange(value)!),
             ),
             const Text('1-2'),
             Radio(
               value: BetRange.range3to4,
-              groupValue: widget.model.selectedBetRange,
-              onChanged: widget.model.isBettingDisabled
+              groupValue: currentModel.selectedBetRange,
+              onChanged: currentModel.isBettingDisabled
                   ? null
                   : (value) => controller
-                      .selectBetRange(widget.model.parseBetRange(value)!),
+                      .chooseBetRange(currentModel.parseBetRange(value)!),
             ),
             const Text('3-4'),
             Radio(
               value: BetRange.range5to6,
-              groupValue: widget.model.selectedBetRange,
-              onChanged: widget.model.isBettingDisabled
+              groupValue: currentModel.selectedBetRange,
+              onChanged: currentModel.isBettingDisabled
                   ? null
                   : (value) => controller
-                      .selectBetRange(widget.model.parseBetRange(value)!),
+                      .chooseBetRange(currentModel.parseBetRange(value)!),
             ),
             const Text('5-6'),
           ],
@@ -277,7 +276,7 @@ class GameRoomState extends State<GameRoomScreen> {
           color: const Color.fromARGB(255, 194, 227, 241),
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: DropdownButton<int?>(
-            value: widget.model.rangeBetAmount,
+            value: currentModel.rangeBetAmount,
             items: const [
               DropdownMenuItem<int?>(
                   value: null, child: Text('Choose bet amount')),
@@ -285,14 +284,14 @@ class GameRoomState extends State<GameRoomScreen> {
               DropdownMenuItem(value: 20, child: Text('\$20')),
               DropdownMenuItem(value: 30, child: Text('\$30')),
             ],
-            onChanged: widget.model.isBettingDisabled
+            onChanged: currentModel.isBettingDisabled
                 ? null
                 : (value) {
                     setState(() {
-                      widget.model.rangeBetAmount = value;
-                      widget.model.isPlayEnabled =
-                          widget.model.betAmount != null ||
-                              widget.model.rangeBetAmount != null;
+                      currentModel.rangeBetAmount = value;
+                      currentModel.isPlayEnabled =
+                          currentModel.betAmount != null ||
+                              currentModel.rangeBetAmount != null;
                     });
                   },
             hint: const Text('Choose bet amount'),

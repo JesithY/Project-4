@@ -60,3 +60,16 @@ class GameModel {
     return null;
   }
 }
+
+extension BetRangeLabel on BetRange {
+  String get label {
+    switch (this) {
+      case BetRange.range1to2:
+        return '1-2';
+      case BetRange.range3to4:
+        return '3-4';
+      case BetRange.range5to6:
+        return '5-6';
+    }
+  }
+}

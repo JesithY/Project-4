@@ -2,106 +2,117 @@ import 'package:lesson6/model/game_model.dart';
 import 'dart:math';
 
 class GameController {
-  final Function(GameModel) onUpdate;
-  GameModel model;
+  final Function(GameModel) updateModel;
+  GameModel gameModel;
 
-  GameController(this.model, this.onUpdate) {
-    model.selectedBetType = BetType.odd;
-    model.selectedBetRange = BetRange.range1to2;
-    _enablePlayButtonIfNeeded();
+  GameController(this.gameModel, this.updateModel) {
+    gameModel.selectedBetType = BetType.odd;
+    gameModel.selectedBetRange = BetRange.range1to2;
+    checkPlayButtonStatus();
   }
 
-  void toggleShowKey(bool value) {
-    model.showKey = value;
-    onUpdate(model);
+  void toggleKeyVisibility(bool value) {
+    gameModel.showKey = value;
+    updateModel(gameModel);
   }
 
-  void selectBetType(BetType betType) {
-    model.selectedBetType = betType;
-    _enablePlayButtonIfNeeded();
+  void chooseBetType(BetType betType) {
+    gameModel.selectedBetType = betType;
+    checkPlayButtonStatus();
+    updateModel(gameModel);
   }
 
-  void selectBetRange(BetRange betRange) {
-    model.selectedBetRange = betRange;
-    _enablePlayButtonIfNeeded();
+  void chooseBetRange(BetRange betRange) {
+    gameModel.selectedBetRange = betRange;
+    checkPlayButtonStatus();
+    updateModel(gameModel);
   }
 
-  void selectBetAmount(int amount) {
-    model.betAmount = amount;
-    _enablePlayButtonIfNeeded();
+  void setBetAmount(int amount) {
+    gameModel.betAmount = amount;
+    checkPlayButtonStatus();
+    updateModel(gameModel);
   }
 
-  void selectRangeBetAmount(int amount) {
-    model.rangeBetAmount = amount;
-    _enablePlayButtonIfNeeded();
+  void setRangeBetAmount(int amount) {
+    gameModel.rangeBetAmount = amount;
+    checkPlayButtonStatus();
+    updateModel(gameModel);
   }
 
-  void playGame() {
-    String resultMessage = '';
-    if (model.selectedBetType != null && model.betAmount != null) {
-      if ((model.key % 2 == 0 && model.selectedBetType == BetType.even) ||
-          (model.key % 2 != 0 && model.selectedBetType == BetType.odd)) {
-        model.balance += model.betAmount! * 2;
-        resultMessage += 'You won on ${model.selectedBetType == BetType.even ? 'even' : 'odd'}: +\$${model.betAmount! * 2}\n';
+  void startGame() {
+    String message = '';
+    if (gameModel.selectedBetType != null && gameModel.betAmount != null) {
+      if ((gameModel.key % 2 == 0 &&
+              gameModel.selectedBetType == BetType.even) ||
+          (gameModel.key % 2 != 0 &&
+              gameModel.selectedBetType == BetType.odd)) {
+        gameModel.balance += gameModel.betAmount! * 2;
+        message +=
+            'You won on ${gameModel.selectedBetType == BetType.even ? 'even' : 'odd'}: +\$${gameModel.betAmount! * 2}\n';
       } else {
-        model.balance -= model.betAmount!;
-        resultMessage += 'You lost on ${model.selectedBetType == BetType.even ? 'even' : 'odd'}: -\$${model.betAmount!}\n';
+        gameModel.balance -= gameModel.betAmount!;
+        message +=
+            'You lost on ${gameModel.selectedBetType == BetType.even ? 'even' : 'odd'}: -\$${gameModel.betAmount!}\n';
       }
     } else {
-      resultMessage += 'No bet on even/odd\n';
+      message += 'No bet on even/odd\n';
     }
 
-    if (model.selectedBetRange != null && model.rangeBetAmount != null) {
-      if ((model.selectedBetRange == BetRange.range1to2 && model.key >= 1 && model.key <= 2) ||
-          (model.selectedBetRange == BetRange.range3to4 && model.key >= 3 && model.key <= 4) ||
-          (model.selectedBetRange == BetRange.range5to6 && model.key >= 5 && model.key <= 6)) {
-        model.balance += model.rangeBetAmount! * 3;
-        resultMessage += 'You won on ${model.selectedBetRange!.label}: +\$${model.rangeBetAmount! * 3}';
+    if (gameModel.selectedBetRange != null &&
+        gameModel.rangeBetAmount != null) {
+      if ((gameModel.selectedBetRange == BetRange.range1to2 &&
+              gameModel.key >= 1 &&
+              gameModel.key <= 2) ||
+          (gameModel.selectedBetRange == BetRange.range3to4 &&
+              gameModel.key >= 3 &&
+              gameModel.key <= 4) ||
+          (gameModel.selectedBetRange == BetRange.range5to6 &&
+              gameModel.key >= 5 &&
+              gameModel.key <= 6)) {
+        gameModel.balance += gameModel.rangeBetAmount! * 3;
+        message +=
+            'You won on ${gameModel.selectedBetRange!.label}: +\$${gameModel.rangeBetAmount! * 3}';
       } else {
-        model.balance -= model.rangeBetAmount!;
-        resultMessage += 'You lost on ${model.selectedBetRange!.label}: -\$${model.rangeBetAmount!}';
+        gameModel.balance -= gameModel.rangeBetAmount!;
+        message +=
+            'You lost on ${gameModel.selectedBetRange!.label}: -\$${gameModel.rangeBetAmount!}';
       }
     } else {
-      resultMessage += 'No bet on range';
+      message += 'No bet on range';
     }
 
-    model.result = resultMessage;
-    model.isNewGameEnabled = true;
-    model.isBettingDisabled = true;
-    model.isPlayEnabled = false;
-    onUpdate(model);
+    gameModel.result = message;
+    gameModel.isNewGameEnabled = true;
+    gameModel.isBettingDisabled = true;
+    gameModel.isPlayEnabled = false;
+    updateModel(gameModel);
   }
 
-  void newGame() {
-    bool previousShowKey = model.showKey; // Preserve showKey state
-    model.reset();
-    model.key = Random().nextInt(6) + 1; // Generate a new key between 1 and 6, inclusive
-    model.selectedBetType = BetType.odd;
-    model.selectedBetRange = BetRange.range1to2;
-    model.showKey = previousShowKey; // Restore showKey state
-    onUpdate(model);
+  void startNewGame() {
+    bool keepKeyVisible = gameModel.showKey;
+    int previousKey = gameModel.key;
+
+    int newKey;
+    do {
+      newKey = Random().nextInt(6) + 1;
+    } while (newKey == previousKey);
+
+    gameModel.reset();
+    gameModel.key = newKey;
+    gameModel.selectedBetType = BetType.odd;
+    gameModel.selectedBetRange = BetRange.range1to2;
+    gameModel.showKey = keepKeyVisible;
+    updateModel(gameModel);
   }
 
-  void _enablePlayButtonIfNeeded() {
-    if ((model.selectedBetType != null && model.betAmount != null) ||
-        (model.selectedBetRange != null && model.rangeBetAmount != null)) {
-      model.isPlayEnabled = true;
+  void checkPlayButtonStatus() {
+    if ((gameModel.selectedBetType != null && gameModel.betAmount != null) ||
+        (gameModel.selectedBetRange != null &&
+            gameModel.rangeBetAmount != null)) {
+      gameModel.isPlayEnabled = true;
     } else {
-      model.isPlayEnabled = false;
-    }
-    onUpdate(model);
-  }
-}
-
-extension BetRangeLabel on BetRange {
-  String get label {
-    switch (this) {
-      case BetRange.range1to2:
-        return '1-2';
-      case BetRange.range3to4:
-        return '3-4';
-      case BetRange.range5to6:
-        return '5-6';
+      gameModel.isPlayEnabled = false;
     }
   }
 }
