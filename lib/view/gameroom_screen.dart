@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:lesson6/controller/game_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -87,36 +88,35 @@ class GameRoomState extends State<GameRoomScreen> {
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.black, width: 4),
                 ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        widget.model.result.isNotEmpty
-                            ? '${widget.model.key}'
-                            : '?',
-                        style: const TextStyle(
-                          fontSize: 150,
-                          color: Colors.red,
-                          //fontWeight: FontWeight.bold,
-                        ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Text(
+                      widget.model.result.isNotEmpty
+                          ? '${widget.model.key}'
+                          : '?',
+                      style: const TextStyle(
+                        fontSize: 150,
+                        color: Colors.red,
                       ),
-                      if (widget.model.result.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    ),
+                    if (widget.model.result.isNotEmpty)
+                      Positioned(
+                        top: 100,
+                        child: Container(
+                          padding: const EdgeInsets.all(4.0),
+                          //color: Colors.yellow.withOpacity(0.8),
                           child: Text(
                             widget.model.result,
                             style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.yellow,
-                              //textAlign: TextAlign.center,
-                              //fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Color.fromARGB(255, 221, 225, 25),
                             ),
-                            textAlign: TextAlign.center,
+                            textAlign: TextAlign.start,
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
               const SizedBox(height: 8),
