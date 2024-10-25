@@ -60,5 +60,3 @@ class GameModel {
     return null;
   }
 }
-
-

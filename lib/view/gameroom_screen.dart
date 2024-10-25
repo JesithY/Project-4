@@ -208,7 +208,7 @@ class GameRoomState extends State<GameRoomScreen> {
                 ],
               ),
               Container(
-                color: Colors.lightBlueAccent,
+                color: const Color.fromARGB(255, 194, 227, 241),
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: DropdownButton<int?>(
                   value: widget.model.betAmount,
@@ -271,7 +271,7 @@ class GameRoomState extends State<GameRoomScreen> {
         ),
         const SizedBox(height: 10),
         Container(
-          color: Colors.lightBlueAccent,
+          color: const Color.fromARGB(255, 194, 227, 241),
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: DropdownButton<int?>(
             value: widget.model.rangeBetAmount,
